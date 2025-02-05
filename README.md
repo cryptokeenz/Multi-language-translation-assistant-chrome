@@ -2,6 +2,8 @@
 
 一个便捷的Chrome插件，支持多语言翻译，集成谷歌翻译功能。
 
+![image](https://github.com/user-attachments/assets/d66bce90-c601-41e4-92d0-4efd90ba4d8d)
+
 ## 插件特性
 
 - 支持谷歌翻译全部语言
@@ -21,7 +23,3 @@
 1. 安装完成后，插件图标将出现在浏览器工具栏。
 2. 点击图标，进入翻译界面。
 3. 输入需要翻译的文本，选择目标语言。
-
-## 截图
-
-![image](https://github.com/user-attachments/assets/7ed10acf-16bc-4d29-840a-eb34e69ca28b)
