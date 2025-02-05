@@ -2,7 +2,8 @@
 
 一个便捷的Chrome插件，支持多语言翻译，集成谷歌翻译功能。
 
-![image](https://github.com/user-attachments/assets/d66bce90-c601-41e4-92d0-4efd90ba4d8d)
+![image](https://github.com/user-attachments/assets/0ff28cf1-98ab-4a41-ac01-8ad8987bc219)
+
 
 ## 插件特性
 
