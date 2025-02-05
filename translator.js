@@ -4,10 +4,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const targetLang = document.getElementById('targetLang');
     const langSearch = document.getElementById('langSearch');
     const speakerButton = document.getElementById('speakerButton');
+    const sourceSpeakerButton = document.getElementById('sourceSpeakerButton');
     const copyButton = document.getElementById('copyButton');
+    const sourceCopyButton = document.getElementById('sourceCopyButton');
     let translateTimeout;
     let speechUtterance = null;
     let isSpeaking = false;
+    let isSourceSpeaking = false;
 
     // 初始化语言选项
     function initializeLanguageOptions() {
@@ -167,4 +170,62 @@ document.addEventListener('DOMContentLoaded', function() {
     copyButton.addEventListener('mouseleave', () => {
         copyButton.classList.remove('copied');
     });
+
+    // 复制原文
+    async function copySourceText() {
+        const text = sourceText.value;
+        if (!text) return;
+
+        try {
+            await navigator.clipboard.writeText(text);
+        } catch (err) {
+            console.error('复制失败:', err);
+        }
+    }
+
+    // 播放原文
+    function playSourceText() {
+        if (isSourceSpeaking) {
+            window.speechSynthesis.cancel();
+            isSourceSpeaking = false;
+            sourceSpeakerButton.classList.remove('playing');
+            return;
+        }
+
+        const text = sourceText.value;
+        if (!text) return;
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        // 自动检测原文语言
+        utterance.onend = function() {
+            isSourceSpeaking = false;
+            sourceSpeakerButton.classList.remove('playing');
+        };
+
+        utterance.onerror = function() {
+            isSourceSpeaking = false;
+            sourceSpeakerButton.classList.remove('playing');
+        };
+
+        window.speechSynthesis.speak(utterance);
+        isSourceSpeaking = true;
+        sourceSpeakerButton.classList.add('playing');
+    }
+
+    // 添加原文复制按钮事件
+    sourceCopyButton.addEventListener('mousedown', () => {
+        sourceCopyButton.classList.add('copied');
+    });
+
+    sourceCopyButton.addEventListener('mouseup', () => {
+        sourceCopyButton.classList.remove('copied');
+        copySourceText();
+    });
+
+    sourceCopyButton.addEventListener('mouseleave', () => {
+        sourceCopyButton.classList.remove('copied');
+    });
+
+    // 添加原文播放按钮事件
+    sourceSpeakerButton.addEventListener('click', playSourceText);
 }); 

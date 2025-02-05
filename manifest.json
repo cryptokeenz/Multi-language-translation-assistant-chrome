@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "多语言翻译助手",
-  "version": "1.0",
+  "version": "1.0.1",
   "description": "便捷的多语言翻译工具，支持侧边栏显示",
   "permissions": [
     "sidePanel",
