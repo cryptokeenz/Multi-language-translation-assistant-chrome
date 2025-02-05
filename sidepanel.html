@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>翻译助手</title>
+    <style>
+        body {
+            width: 100%;
+            margin: 0;
+            padding: 16px;
+            font-family: Arial, sans-serif;
+            box-sizing: border-box;
+        }
+        /* 设置所有元素的 box-sizing */
+        * {
+            box-sizing: border-box;
+        }
+        .container {
+            width: 100%;
+            margin: 0 auto;
+        }
+        #sourceText {
+            width: 100%;
+            height: 150px;
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: none;
+        }
+        .language-selector-container {
+            width: 100%;
+            margin: 10px 0;
+        }
+        #langSearch {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            height: 30px;
+        }
+        #targetLang {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            height: 30px;
+        }
+        #translateBtn {
+            padding: 8px 16px;
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        #translateBtn:hover {
+            background-color: #3367d6;
+        }
+        .translated-container {
+            position: relative;
+            width: 100%;
+        }
+        #translatedText {
+            width: 100%;
+            height: 150px;
+            margin-top: 10px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: none;
+        }
+        .button-container {
+            position: absolute;
+            bottom: -40px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        #copyButton {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+        }
+        #copyButton svg {
+            width: 24px;
+            height: 24px;
+            fill: #888;
+            transition: fill 0.3s ease;
+        }
+        #copyButton.copied svg {
+            fill: #4285f4;
+        }
+        #copyButton:hover svg {
+            fill: #666;
+        }
+        #copyButton.copied:hover svg {
+            fill: #3367d6;
+        }
+        #speakerButton {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+        }
+        #speakerButton svg {
+            width: 24px;
+            height: 24px;
+            fill: #888;
+            transition: fill 0.3s ease;
+        }
+        #speakerButton.playing svg {
+            fill: #4285f4;
+        }
+        #speakerButton:hover svg {
+            fill: #666;
+        }
+        #speakerButton.playing:hover svg {
+            fill: #3367d6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <textarea id="sourceText" placeholder="请输入要翻译的文本"></textarea>
+        <div class="language-selector-container">
+            <input type="text" id="langSearch" placeholder="搜索语言...">
+            <select id="targetLang">
+                <!-- 语言选项将通过 JavaScript 动态添加 -->
+            </select>
+        </div>
+        <button id="translateBtn">翻译</button>
+        <div class="translated-container">
+            <textarea id="translatedText" readonly placeholder="翻译结果将显示在这里"></textarea>
+            <div class="button-container">
+                <button id="copyButton" title="复制翻译结果">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                    </svg>
+                </button>
+                <button id="speakerButton" title="播放翻译结果">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    <script src="languages.js"></script>
+    <script src="translator.js"></script>
+</body>
+</html> 
