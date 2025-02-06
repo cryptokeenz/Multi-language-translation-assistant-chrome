@@ -196,20 +196,35 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!text) return;
 
         const utterance = new SpeechSynthesisUtterance(text);
-        // 自动检测原文语言
-        utterance.onend = function() {
-            isSourceSpeaking = false;
-            sourceSpeakerButton.classList.remove('playing');
-        };
+        // 从翻译 API 的响应中获取源语言
+        fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang.value}&dt=t&q=${encodeURIComponent(text)}`)
+            .then(response => response.json())
+            .then(data => {
+                // 获取检测到的源语言
+                const detectedLanguage = data[2];
+                utterance.lang = detectedLanguage;
+                
+                utterance.onend = function() {
+                    isSourceSpeaking = false;
+                    sourceSpeakerButton.classList.remove('playing');
+                };
 
-        utterance.onerror = function() {
-            isSourceSpeaking = false;
-            sourceSpeakerButton.classList.remove('playing');
-        };
+                utterance.onerror = function() {
+                    isSourceSpeaking = false;
+                    sourceSpeakerButton.classList.remove('playing');
+                };
 
-        window.speechSynthesis.speak(utterance);
-        isSourceSpeaking = true;
-        sourceSpeakerButton.classList.add('playing');
+                window.speechSynthesis.speak(utterance);
+                isSourceSpeaking = true;
+                sourceSpeakerButton.classList.add('playing');
+            })
+            .catch(error => {
+                console.error('语言检测失败:', error);
+                // 如果检测失败，仍然尝试播放
+                window.speechSynthesis.speak(utterance);
+                isSourceSpeaking = true;
+                sourceSpeakerButton.classList.add('playing');
+            });
     }
 
     // 添加原文复制按钮事件
@@ -228,4 +243,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 添加原文播放按钮事件
     sourceSpeakerButton.addEventListener('click', playSourceText);
+
+    // 监听来自后台的消息
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+        if (request.action === "translateText") {
+            sourceText.value = request.text;
+            // 触发翻译
+            clearTimeout(translateTimeout);
+            translateTimeout = setTimeout(translateText, 500);
+        }
+    });
 }); 
