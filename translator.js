@@ -12,6 +12,12 @@ document.addEventListener('DOMContentLoaded', function() {
     let isSpeaking = false;
     let isSourceSpeaking = false;
 
+    // 建立与后台脚本的长连接
+    const port = chrome.runtime.connect({name: 'sidePanel'});
+
+    // 通知后台脚本侧边栏已准备就绪
+    port.postMessage({action: 'ready'});
+
     // 初始化语言选项
     function initializeLanguageOptions() {
         const sortedLanguages = Object.entries(SUPPORTED_LANGUAGES)
@@ -39,19 +45,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 code.toLowerCase().includes(searchText.toLowerCase()))
             .sort((a, b) => a[1].localeCompare(b[1], 'zh-CN'));
 
-        // 保存当前选项的选中状态
-        const wasOptionSelected = targetLang.selectedIndex !== -1;
-        const selectedValue = targetLang.value;
-
         targetLang.innerHTML = sortedLanguages
             .map(([code, name]) => `<option value="${code}">${name}</option>`)
             .join('');
 
-        // 如果之前有选中的值，继续保持选中
-        if (wasOptionSelected) {
-            targetLang.value = selectedValue;
+        // 如果之前的值在过滤后的结果中存在，则保持选中
+        if (sortedLanguages.some(([code]) => code === currentValue)) {
+            targetLang.value = currentValue;
+        } else if (sortedLanguages.length > 0) {
+            // 如果之前的值不存在，选择第一个选项并触发翻译
+            targetLang.value = sortedLanguages[0][0];
             // 保存选择的语言
-            chrome.storage.local.set({ 'lastUsedLanguage': selectedValue });
+            chrome.storage.local.set({ 'lastUsedLanguage': targetLang.value });
+            // 如果有文本，则触发翻译
+            if (sourceText.value) {
+                translateText();
+            }
         }
     }
 
@@ -105,9 +114,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // 保存选择的语言
         chrome.storage.local.set({ 'lastUsedLanguage': targetLang.value });
         
+        // 如果输入框有内容，立即触发翻译
         if (sourceText.value) {
-            clearTimeout(translateTimeout);
-            translateTimeout = setTimeout(translateText, 200);
+            translateText();
         }
     });
 
@@ -245,9 +254,9 @@ document.addEventListener('DOMContentLoaded', function() {
     sourceSpeakerButton.addEventListener('click', playSourceText);
 
     // 监听来自后台的消息
-    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-        if (request.action === "translateText") {
-            sourceText.value = request.text;
+    port.onMessage.addListener((msg) => {
+        if (msg.action === "translateText") {
+            sourceText.value = msg.text;
             // 触发翻译
             clearTimeout(translateTimeout);
             translateTimeout = setTimeout(translateText, 500);
